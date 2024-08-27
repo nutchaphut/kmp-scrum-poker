@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "187579982660",
+    "project_id": "planning-poker-ceb73",
+    "storage_bucket": "planning-poker-ceb73.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:187579982660:android:6d14171202480e5c902d11",
+        "android_client_info": {
+          "package_name": "com.nuzchpt.scrumpoker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "187579982660-9v6q54gpv5jq5poadobvjatcmb179sgo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhyTrawbNWP-aNFTSJmIKAtQ-6VSJtGJw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "187579982660-9v6q54gpv5jq5poadobvjatcmb179sgo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
