@@ -9,6 +9,6 @@ class GetParticipantsUseCase(private val repository: RoomRepository) :
     data class Request(val roomId: String)
 
     override suspend fun execute(parameters: Request): Flow<List<Participant>> {
-        return repository.getParticipantDetail(parameters.roomId)
+        return repository.getParticipantDetailList(parameters.roomId)
     }
 }
