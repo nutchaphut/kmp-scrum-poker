@@ -27,6 +27,7 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -279,12 +280,24 @@ fun Participants(participant: Participant, cardFaceState: MutableState<CardFace>
                 )
             }
         )
-        Text(
-            text = participant.participantName.orEmpty().take(16),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
+        Row(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            if (participant.role == Participant.ParticipantRole.HOST) {
+                Icon(
+                    modifier = Modifier.size(16.dp),
+                    imageVector = Icons.Filled.Home,
+                    contentDescription = "host icon"
+                )
+            }
+            Text(
+                text = participant.participantName.orEmpty().take(16),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,)
+        }
+
     }
 }
 

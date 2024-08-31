@@ -5,16 +5,22 @@ import dev.gitlive.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.firstOrNull
 
 interface FireStoreService {
     fun getParticipantList(roomId: String): Flow<QuerySnapshot>
     fun getRoom(roomId: String): Flow<DocumentSnapshot>
-    fun joinRoom(roomId: String, participantId: String, participantName: String): Flow<Unit>
+    fun joinRoom(
+        roomId: String,
+        participantId: String,
+        participantName: String,
+        role: Participant.ParticipantRole,
+    ): Flow<Unit>
+
     fun startVoting(roomId: String, state: String): Flow<Unit>
     fun clearPoint(roomId: String): Flow<Unit>
     fun setPointVoting(roomId: String, participantId: String, point: String?): Flow<Unit>
+    fun getParticipantDetail(roomId: String, participantId: String): Flow<DocumentSnapshot>
 }
 
 class FireStoreServiceImpl(private val firestore: FirebaseFirestore) : FireStoreService {
@@ -23,6 +29,7 @@ class FireStoreServiceImpl(private val firestore: FirebaseFirestore) : FireStore
         roomId: String,
         participantId: String,
         participantName: String,
+        role: Participant.ParticipantRole,
     ): Flow<Unit> = callbackFlow {
         firestore.collection("rooms")
             .document(roomId)
@@ -31,7 +38,7 @@ class FireStoreServiceImpl(private val firestore: FirebaseFirestore) : FireStore
                 Participant(
                     participantId = participantId,
                     participantName = participantName,
-                    role = Participant.ParticipantRole.MEMBER
+                    role = role
                 ),
                 merge = true
             )
@@ -85,6 +92,22 @@ class FireStoreServiceImpl(private val firestore: FirebaseFirestore) : FireStore
             .document(participantId)
             .update("point" to point)
         trySend(Unit)
+        awaitClose {
+            channel.close()
+        }
+    }
+
+    override fun getParticipantDetail(
+        roomId: String,
+        participantId: String,
+    ): Flow<DocumentSnapshot> = callbackFlow {
+        firestore.collection("rooms")
+            .document(roomId)
+            .collection("participants")
+            .document(participantId).snapshots.collect {
+                trySend(it)
+                channel.close()
+            }
         awaitClose {
             channel.close()
         }
