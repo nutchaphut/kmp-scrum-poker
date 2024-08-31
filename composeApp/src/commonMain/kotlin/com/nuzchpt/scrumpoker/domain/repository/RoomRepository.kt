@@ -48,7 +48,7 @@ class RoomRepositoryImpl(
             roomId = roomId,
             participantId = localStorageDatasource.getUserId(),
         ).catch { emit(null) }.collect { documentSnapshot ->
-            emit(documentSnapshot.data<Participant>())
+            emit(documentSnapshot.data<Participant?>())
         }
     }
 
