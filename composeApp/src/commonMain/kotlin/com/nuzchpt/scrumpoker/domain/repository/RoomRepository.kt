@@ -2,6 +2,7 @@ import com.nuzchpt.scrumpoker.data.local.LocalStorageDatasource
 import com.nuzchpt.scrumpoker.model.participant.Participant
 import com.nuzchpt.scrumpoker.model.point.PointVotingAvailable
 import com.nuzchpt.scrumpoker.model.room.RoomDetail
+import kotlin.random.Random
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -16,6 +17,7 @@ interface RoomRepository {
     fun clearParticipantPoints(roomId: String): Flow<Unit>
     fun setPointVoting(roomId: String, point: String?): Flow<Unit>
     fun leaveRoom(): Flow<Unit>
+    fun createRoom(roomName: String): Flow<RoomDetail>
 }
 
 class RoomRepositoryImpl(
@@ -80,5 +82,22 @@ class RoomRepositoryImpl(
 
     override fun leaveRoom(): Flow<Unit> = flow {
         emit(localStorageDatasource.clearRoomId())
+    }
+
+    override fun createRoom(roomName: String): Flow<RoomDetail> = flow {
+        val roomId = generateRoomUUID()
+        fireStoreService.createRoom(roomName = roomName, roomId = roomId).collect {
+            emit(RoomDetail(roomId = roomId, roomName = roomName))
+        }
+    }
+
+
+    private fun generateRoomUUID(): String {
+        val firstPart = (Random.nextDouble() * 46656).toInt()
+        val secondPart = (Random.nextDouble() * 46656).toInt()
+        val firstPartStr = firstPart.toString(36).padStart(3, '0')
+        val secondPartStr = secondPart.toString(36).padStart(3, '0')
+
+        return firstPartStr + secondPartStr
     }
 }

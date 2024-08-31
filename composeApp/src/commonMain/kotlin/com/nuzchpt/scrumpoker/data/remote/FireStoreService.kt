@@ -1,4 +1,5 @@
 import com.nuzchpt.scrumpoker.model.participant.Participant
+import com.nuzchpt.scrumpoker.model.room.RoomDetail
 import dev.gitlive.firebase.firestore.DocumentSnapshot
 import dev.gitlive.firebase.firestore.FirebaseFirestore
 import dev.gitlive.firebase.firestore.QuerySnapshot
@@ -21,6 +22,7 @@ interface FireStoreService {
     fun clearPoint(roomId: String): Flow<Unit>
     fun setPointVoting(roomId: String, participantId: String, point: String?): Flow<Unit>
     fun getParticipantDetail(roomId: String, participantId: String): Flow<DocumentSnapshot>
+    fun createRoom(roomName: String, roomId: String): Flow<Unit>
 }
 
 class FireStoreServiceImpl(private val firestore: FirebaseFirestore) : FireStoreService {
@@ -108,6 +110,14 @@ class FireStoreServiceImpl(private val firestore: FirebaseFirestore) : FireStore
                 trySend(it)
                 channel.close()
             }
+        awaitClose {
+            channel.close()
+        }
+    }
+
+    override fun createRoom(roomName: String, roomId: String): Flow<Unit> = callbackFlow {
+        trySend(firestore.collection("rooms").document(roomId).set(RoomDetail(roomId = roomId, roomName = roomName)))
+        channel.close()
         awaitClose {
             channel.close()
         }

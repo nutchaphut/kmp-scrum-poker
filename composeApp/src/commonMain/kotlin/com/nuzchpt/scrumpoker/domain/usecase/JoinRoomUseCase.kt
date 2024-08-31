@@ -7,15 +7,20 @@ import kotlinx.coroutines.flow.flatMapLatest
 
 class JoinRoomUseCase(private val repository: RoomRepository) : UseCase<JoinRoomUseCase.Request, Unit>() {
 
-    data class Request(val roomId: String)
+    data class Request(val roomId: String, val isHost: Boolean = false)
 
     override suspend fun execute(parameters: Request): Flow<Unit> {
-        return repository.getParticipantInfo(roomId = parameters.roomId).flatMapLatest { participant ->
-            repository.joinRoom(
-                roomId = parameters.roomId,
-                role = participant?.role ?: Participant.ParticipantRole.MEMBER
-            )
+        return if (parameters.isHost) {
+            repository.joinRoom(roomId = parameters.roomId, role = Participant.ParticipantRole.HOST)
+        } else {
+            repository.getParticipantInfo(roomId = parameters.roomId).flatMapLatest { participant ->
+                repository.joinRoom(
+                    roomId = parameters.roomId,
+                    role = participant?.role ?: Participant.ParticipantRole.MEMBER
+                )
+            }
         }
+
     }
 
 }
