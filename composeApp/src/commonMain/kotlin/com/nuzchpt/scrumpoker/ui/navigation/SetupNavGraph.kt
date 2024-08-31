@@ -22,7 +22,6 @@ fun SetupNavGraph(
     navigationActions: NavigationActions = remember(navController) { NavigationActions(navController) },
 ) {
 
-
     NavHost(
         navController = navController,
         startDestination = startDestination
@@ -36,7 +35,6 @@ fun SetupNavGraph(
                 RoomScreen(
                     viewModel = roomViewModel,
                     navigationActions = navigationActions,
-//                    roomId = roomId
                 )
             }
         }

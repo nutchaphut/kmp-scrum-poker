@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.nuzchpt.scrumpoker.domain.usecase.ClearRoomParticipatesPointUseCase
 import com.nuzchpt.scrumpoker.domain.usecase.GetParticipantsUseCase
 import com.nuzchpt.scrumpoker.domain.usecase.GetRoomDetailUseCase
+import com.nuzchpt.scrumpoker.domain.usecase.LeaveRoomUseCase
 import com.nuzchpt.scrumpoker.domain.usecase.SetPointVotingUseCase
 import com.nuzchpt.scrumpoker.domain.usecase.SetVotingStateUseCase
 import com.nuzchpt.scrumpoker.model.participant.Participant
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 abstract class RoomViewModel : ViewModel() {
@@ -24,6 +26,7 @@ abstract class RoomViewModel : ViewModel() {
     abstract val roomDetail: StateFlow<RoomDetailState>
     abstract val participants: StateFlow<List<Participant>>
     abstract val pointList: StateFlow<List<VotingModel>>
+    abstract val leaveRoomState: StateFlow<LeaveRoomState>
 
     interface Input {
         fun getRoomDetail()
@@ -31,6 +34,8 @@ abstract class RoomViewModel : ViewModel() {
         fun startVoting()
         fun showVoteResult()
         fun votePoint(model: PointVotingAvailable)
+        fun leaveRoom()
+        fun clearLeaveRoomState()
     }
 }
 
@@ -41,6 +46,7 @@ class RoomViewModelImpl(
     private val setVotingStateUseCase: SetVotingStateUseCase,
     private val clearRoomParticipatesPointUseCase: ClearRoomParticipatesPointUseCase,
     private val setPointVotingUseCase: SetPointVotingUseCase,
+    private val leaveRoomUseCase: LeaveRoomUseCase,
 ) : RoomViewModel(), RoomViewModel.Input {
     override val input: Input
         get() = this
@@ -58,6 +64,10 @@ class RoomViewModelImpl(
     private val _pointList = MutableStateFlow(defaultPointList)
     override val pointList: StateFlow<List<VotingModel>>
         get() = _pointList
+
+    private val _leaveRoomState = MutableStateFlow<LeaveRoomState>(LeaveRoomState.Idle)
+    override val leaveRoomState: StateFlow<LeaveRoomState>
+        get() = _leaveRoomState
 
     init {
         getRoomDetail()
@@ -130,10 +140,36 @@ class RoomViewModelImpl(
         }
     }
 
+    override fun leaveRoom() {
+        viewModelScope.launch {
+            leaveRoomUseCase.execute(Unit)
+                .catch {
+                    _leaveRoomState.update { LeaveRoomState.Error("error") }
+                }.onStart {
+                    _leaveRoomState.update { LeaveRoomState.Loading }
+                }
+                .collect {
+                    _leaveRoomState.update { LeaveRoomState.Success }
+                }
+        }
+
+    }
+
+    override fun clearLeaveRoomState() {
+        _leaveRoomState.update { LeaveRoomState.Idle }
+    }
+
 }
 
 interface RoomDetailState {
     data object Loading : RoomDetailState
     data class Error(val error: String) : RoomDetailState
     data class Success(val data: RoomDetail) : RoomDetailState
+}
+
+interface LeaveRoomState {
+    data object Idle : LeaveRoomState
+    data object Loading : LeaveRoomState
+    data class Error(val error: String) : LeaveRoomState
+    data object Success : LeaveRoomState
 }

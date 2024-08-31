@@ -47,6 +47,7 @@ import com.nuzchpt.scrumpoker.ui.component.CardFace
 import com.nuzchpt.scrumpoker.ui.component.CircularLayout
 import com.nuzchpt.scrumpoker.ui.component.FlipCard
 import com.nuzchpt.scrumpoker.ui.navigation.NavigationActions
+import com.nuzchpt.scrumpoker.ui.room.viewmodel.LeaveRoomState
 import com.nuzchpt.scrumpoker.ui.room.viewmodel.RoomDetailState
 import com.nuzchpt.scrumpoker.ui.room.viewmodel.RoomViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -61,6 +62,7 @@ fun RoomScreen(
     val roomDetail = viewModel.roomDetail.collectAsState()
     val participants = viewModel.participants.collectAsState()
     val pointList = viewModel.pointList.collectAsState()
+    val leaveRoomState = viewModel.leaveRoomState.collectAsState()
     val cardFaceState = remember {
         val state = (roomDetail.value as? RoomDetailState.Success)?.data?.state
         val cardFace = if (state == RoomState.END) CardFace.Back else CardFace.Front
@@ -87,7 +89,7 @@ fun RoomScreen(
                     },
                     navigationIcon = {
                         IconButton({
-                            //TODO show popup leave
+                            viewModel.input.leaveRoom()
                         }) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -186,6 +188,17 @@ fun RoomScreen(
                 }
             }
         }
+    }
+
+    when (leaveRoomState.value) {
+        is LeaveRoomState.Success -> {
+            navigationActions.navigateToMain()
+        }
+
+        else -> {
+
+        }
+
     }
 }
 
