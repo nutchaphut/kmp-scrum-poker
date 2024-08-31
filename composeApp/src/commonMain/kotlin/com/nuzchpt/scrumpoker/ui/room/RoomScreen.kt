@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,9 +18,15 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -66,91 +73,113 @@ fun RoomScreen(
     }
     val roomState = (roomDetail.value as? RoomDetailState.Success)?.data?.state
     MaterialTheme {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Text(
-                text = (roomDetail.value as? RoomDetailState.Success)?.data?.roomName.orEmpty(),
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
-            Box(modifier = Modifier.wrapContentSize()) {
-                if (participants.value.isNotEmpty()) {
-                    CircularLayout(
-                        radius = 460f,
-                        content = {
-                            participants.value.map { participant ->
-                                Participants(
-                                    participant = participant,
-                                    cardFaceState = cardFaceState
-                                )
-                            }
-                        })
-                    Card(modifier = Modifier.height(108.dp).width(128.dp).align(Alignment.Center)) {
-                        val buttonText = when (roomState) {
-                            RoomState.VOTING -> "Show Vote"
-                            else -> "Start Voting"
-                        }
-
-                        val onClickAction = when (roomState) {
-                            RoomState.VOTING -> {
-                                { viewModel.input.showVoteResult() }
-                            }
-
-                            else -> {
-                                { viewModel.input.startVoting() }
-                            }
-                        }
-
-                        TextButton(
-                            modifier = Modifier.align(Alignment.Center),
-                            onClick = onClickAction
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = buttonText,
-                                textAlign = TextAlign.Center
+                                text = (roomDetail.value as? RoomDetailState.Success)?.data?.roomName.orEmpty(),
                             )
                         }
+                    },
+                    navigationIcon = {
+                        IconButton({
+                            //TODO show popup leave
+                        }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "menu items"
+                            )
+                        }
+                    }
+                )
+            }
+        ) { innerPadding ->
+            Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+                Box(modifier = Modifier.wrapContentSize()) {
+                    if (participants.value.isNotEmpty()) {
+                        CircularLayout(
+                            radius = 460f,
+                            content = {
+                                participants.value.map { participant ->
+                                    Participants(
+                                        participant = participant,
+                                        cardFaceState = cardFaceState
+                                    )
+                                }
+                            })
+                        Card(modifier = Modifier.height(108.dp).width(128.dp).align(Alignment.Center)) {
+                            val buttonText = when (roomState) {
+                                RoomState.VOTING -> "Show Vote"
+                                else -> "Start Voting"
+                            }
 
+                            val onClickAction = when (roomState) {
+                                RoomState.VOTING -> {
+                                    { viewModel.input.showVoteResult() }
+                                }
+
+                                else -> {
+                                    { viewModel.input.startVoting() }
+                                }
+                            }
+
+                            TextButton(
+                                modifier = Modifier.align(Alignment.Center),
+                                onClick = onClickAction
+                            ) {
+                                Text(
+                                    text = buttonText,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+
+                        }
                     }
                 }
-            }
 
-            if (roomState == RoomState.END) {
-                Column(modifier = Modifier.align(Alignment.BottomCenter)) {
-                    Text("Voting Result")
-                    LazyRow {
-                        val points = participants.value
-                            .groupBy { it.point }
-                            .mapValues { it.value.size }
-                            .toList()
-                        items(points) { (point, count) ->
-                            point?.let {
-                                PointCard(point, count)
+                if (roomState == RoomState.END) {
+                    Column(modifier = Modifier.align(Alignment.BottomCenter)) {
+                        Text("Voting Result")
+                        LazyRow {
+                            val points = participants.value
+                                .groupBy { it.point }
+                                .mapValues { it.value.size }
+                                .toList()
+                            items(points) { (point, count) ->
+                                point?.let {
+                                    PointCard(point, count)
+                                }
                             }
                         }
                     }
-                }
-            } else {
-                LazyRow(
-                    modifier = Modifier.align(Alignment.BottomStart).fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(pointList.value) { item ->
-                        Card(
-                            backgroundColor = if (item.isVoted) Color.Blue else Color.White,
-                            modifier = Modifier
-                                .height(64.dp)
-                                .width(48.dp)
-                                .clickable {
-                                    viewModel.input.votePoint(item.point)
-                                }
-                        ) {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier.fillMaxSize()
+                } else {
+                    LazyRow(
+                        modifier = Modifier.align(Alignment.BottomStart).fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(pointList.value) { item ->
+                            Card(
+                                backgroundColor = if (item.isVoted) Color.Blue else Color.White,
+                                modifier = Modifier
+                                    .height(64.dp)
+                                    .width(48.dp)
+                                    .clickable {
+                                        viewModel.input.votePoint(item.point)
+                                    }
                             ) {
-                                Text(
-                                    text = item.point.display,
-                                    color = if (item.isVoted) Color.White else Color.Black
-                                )
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    Text(
+                                        text = item.point.display,
+                                        color = if (item.isVoted) Color.White else Color.Black
+                                    )
+                                }
                             }
                         }
                     }
