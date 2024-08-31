@@ -2,6 +2,7 @@ package com.nuzchpt.scrumpoker.ui.main
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -9,10 +10,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TextField
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -52,67 +59,101 @@ fun MainScreen(
     val roomId = remember { mutableStateOf("") }
     val bottomSheetUserInputName = remember { mutableStateOf("") }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Text("KMP Scrum Poker", modifier = Modifier.align(Alignment.TopCenter).padding(top = 64.dp))
-        Column(modifier = Modifier.wrapContentSize().align(Alignment.Center)) {
-            // TODO: revamp Ui
-            TextField(
-                value = roomId.value,
-                onValueChange = {
-                    roomId.value = it
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("KMP Scrum Poker")
+                    }
+                },
+                navigationIcon = {
+                    IconButton({
+                        // TODO: navigate to menu
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Menu,
+                            contentDescription = "menu items"
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {
+                        // TODO: create room
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = "create room",
+                        )
+                    }
                 }
             )
-            TextButton(onClick = {
-                if (roomId.value.isNotEmpty()) {
-                    viewModel.input.joinRoom(roomId.value)
-                }
-            }) {
-                Text(
-                    text = "Join",
-                    textAlign = TextAlign.Center,
-                )
-            }
         }
+    ) { innerPadding ->
+        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
 
-        when (userInfoState) {
+            Column(modifier = Modifier.wrapContentSize().align(Alignment.Center)) {
+                // TODO: revamp Ui
+                TextField(
+                    value = roomId.value,
+                    onValueChange = {
+                        roomId.value = it
+                    }
+                )
+                TextButton(onClick = {
+                    if (roomId.value.isNotEmpty()) {
+                        viewModel.input.joinRoom(roomId.value)
+                    }
+                }) {
+                    Text(
+                        text = "Join",
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            }
 
-            is UserInfoState.UnRegister -> {
+            when (userInfoState) {
 
-                Dialog(onDismissRequest = {}) {
-                    // TODO: revamp ui?
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                            .padding(16.dp),
-                        shape = RoundedCornerShape(16.dp),
-                    ) {
-                        Column(modifier = Modifier.wrapContentSize().align(Alignment.Center)) {
-                            TextField(
-                                value = bottomSheetUserInputName.value,
-                                onValueChange = {
-                                    bottomSheetUserInputName.value = it
-                                }
-                            )
-                            TextButton(onClick = {
-                                if (bottomSheetUserInputName.value.isNotEmpty()) {
-                                    viewModel.input.saveUserName(bottomSheetUserInputName.value)
-                                }
-                            }) {
-                                Text(
-                                    text = "Save",
-                                    textAlign = TextAlign.Center,
+                is UserInfoState.UnRegister -> {
+
+                    Dialog(onDismissRequest = {}) {
+                        // TODO: revamp ui?
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                                .padding(16.dp),
+                            shape = RoundedCornerShape(16.dp),
+                        ) {
+                            Column(modifier = Modifier.wrapContentSize().align(Alignment.Center)) {
+                                TextField(
+                                    value = bottomSheetUserInputName.value,
+                                    onValueChange = {
+                                        bottomSheetUserInputName.value = it
+                                    }
                                 )
+                                TextButton(onClick = {
+                                    if (bottomSheetUserInputName.value.isNotEmpty()) {
+                                        viewModel.input.saveUserName(bottomSheetUserInputName.value)
+                                    }
+                                }) {
+                                    Text(
+                                        text = "Save",
+                                        textAlign = TextAlign.Center,
+                                    )
+                                }
                             }
                         }
                     }
                 }
+
+                else -> {
+
+                }
+
             }
-
-            else -> {
-
-            }
-
         }
     }
 
