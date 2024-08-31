@@ -13,6 +13,7 @@ import com.nuzchpt.scrumpoker.domain.usecase.GetParticipantsUseCase
 import com.nuzchpt.scrumpoker.domain.usecase.GetRoomDetailUseCase
 import com.nuzchpt.scrumpoker.domain.usecase.GetUserInfoUseCase
 import com.nuzchpt.scrumpoker.domain.usecase.JoinRoomUseCase
+import com.nuzchpt.scrumpoker.domain.usecase.LeaveRoomUseCase
 import com.nuzchpt.scrumpoker.domain.usecase.SaveUserInfoUseCase
 import com.nuzchpt.scrumpoker.domain.usecase.SetPointVotingUseCase
 import com.nuzchpt.scrumpoker.domain.usecase.SetVotingStateUseCase
@@ -42,8 +43,9 @@ val commonModule = module {
     factory { SetVotingStateUseCase(get()) }
     factory { ClearRoomParticipatesPointUseCase(get()) }
     factory { SetPointVotingUseCase(get()) }
+    factory { LeaveRoomUseCase(get()) }
     viewModel<MainViewModel> { MainViewModelImpl(get(), get(), get(), get()) }
-    viewModel<RoomViewModel> { RoomViewModelImpl(get(), get(), get(), get(), get(), get()) }
+    viewModel<RoomViewModel> { RoomViewModelImpl(get(), get(), get(), get(), get(), get(), get()) }
 }
 
 fun initializeKoin(config: KoinAppDeclaration? = null) {

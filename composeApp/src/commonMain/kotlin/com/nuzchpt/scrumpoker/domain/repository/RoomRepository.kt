@@ -13,6 +13,7 @@ interface RoomRepository {
     fun setVotingState(roomId: String, state: String): Flow<Unit>
     fun clearParticipantPoints(roomId: String): Flow<Unit>
     fun setPointVoting(roomId: String, point: String?): Flow<Unit>
+    fun leaveRoom(): Flow<Unit>
 }
 
 class RoomRepositoryImpl(
@@ -63,5 +64,9 @@ class RoomRepositoryImpl(
             participantId = localStorageDatasource.getUserId(),
             point = point
         ).collect {}
+    }
+
+    override fun leaveRoom(): Flow<Unit> = flow {
+        emit(localStorageDatasource.clearRoomId())
     }
 }
