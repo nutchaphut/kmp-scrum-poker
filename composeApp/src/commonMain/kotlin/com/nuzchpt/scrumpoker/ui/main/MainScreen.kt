@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -58,6 +59,7 @@ fun MainScreen(
     val userInfoState by viewModel.getUserInfoState.collectAsState()
     val roomId = remember { mutableStateOf("") }
     val bottomSheetUserInputName = remember { mutableStateOf("") }
+    val userInputRoomName = remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -81,7 +83,7 @@ fun MainScreen(
                 },
                 actions = {
                     IconButton(onClick = {
-                        // TODO: create room
+                        viewModel.input.openCreateRoomDialog()
                     }) {
                         Icon(
                             imageVector = Icons.Filled.Add,
@@ -158,6 +160,49 @@ fun MainScreen(
     }
 
     when (val state = joinRoomState) {
+        is JoinRoomState.OpenDialogCreateRoom -> {
+            Dialog(onDismissRequest = {}) {
+                // TODO: revamp ui?
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .padding(16.dp),
+                    shape = RoundedCornerShape(16.dp),
+                ) {
+                    Column(modifier = Modifier.wrapContentSize()) {
+                        TextField(
+                            value = userInputRoomName.value,
+                            onValueChange = {
+                                userInputRoomName.value = it
+                            }
+                        )
+                        Row {
+                            TextButton(onClick = {
+                                viewModel.input.resetJoinState()
+                            }) {
+                                Text(
+                                    text = "Cancel",
+                                    textAlign = TextAlign.Center,
+                                )
+                            }
+
+                            TextButton(onClick = {
+                                if (userInputRoomName.value.isNotEmpty()) {
+                                    viewModel.input.createRoom(userInputRoomName.value)
+                                }
+                            }) {
+                                Text(
+                                    text = "Create",
+                                    textAlign = TextAlign.Center,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         is JoinRoomState.Idle -> {
 
         }
