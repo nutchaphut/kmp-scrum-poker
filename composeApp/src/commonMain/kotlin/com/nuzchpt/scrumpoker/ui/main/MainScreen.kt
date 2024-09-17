@@ -25,20 +25,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.nuzchpt.scrumpoker.data.local.LocalStorageDatasource
 import com.nuzchpt.scrumpoker.ui.main.viewmodel.JoinRoomState
 import com.nuzchpt.scrumpoker.ui.main.viewmodel.MainViewModel
 import com.nuzchpt.scrumpoker.ui.main.viewmodel.UserInfoState
 import com.nuzchpt.scrumpoker.ui.navigation.NavigationActions
-import kotlinx.coroutines.launch
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 
@@ -48,13 +43,6 @@ fun MainScreen(
     viewModel: MainViewModel = koinViewModel(),
     navigationActions: NavigationActions,
 ) {
-    val localStorageDatasource: LocalStorageDatasource = koinInject()
-    val scope = rememberCoroutineScope()
-    scope.launch {
-        localStorageDatasource.getRoomId()?.let { roomId ->
-            viewModel.input.joinRoom(roomId)
-        }
-    }
     val joinRoomState by viewModel.joinRoomState.collectAsState()
     val userInfoState by viewModel.getUserInfoState.collectAsState()
     val roomId = remember { mutableStateOf("") }

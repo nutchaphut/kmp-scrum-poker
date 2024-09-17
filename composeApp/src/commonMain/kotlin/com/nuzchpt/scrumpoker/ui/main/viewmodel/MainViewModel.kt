@@ -3,6 +3,7 @@ package com.nuzchpt.scrumpoker.ui.main.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nuzchpt.scrumpoker.domain.usecase.CreateRoomUseCase
+import com.nuzchpt.scrumpoker.domain.usecase.GetLocalRoomIdUseCase
 import com.nuzchpt.scrumpoker.domain.usecase.GetRoomDetailUseCase
 import com.nuzchpt.scrumpoker.domain.usecase.GetUserInfoUseCase
 import com.nuzchpt.scrumpoker.domain.usecase.JoinRoomUseCase
@@ -32,6 +33,7 @@ abstract class MainViewModel : ViewModel() {
 
 class MainViewModelImpl(
     private val getRoomDetailUseCase: GetRoomDetailUseCase,
+    private val getLocalRoomIdUseCase: GetLocalRoomIdUseCase,
     private val joinRoomUseCase: JoinRoomUseCase,
     private val saveUserInfoUseCase: SaveUserInfoUseCase,
     private val getUserInfoUseCase: GetUserInfoUseCase,
@@ -50,6 +52,17 @@ class MainViewModelImpl(
 
     init {
         getUserInfo()
+        getLocalRoomId()
+    }
+
+    private fun getLocalRoomId() {
+        viewModelScope.launch {
+            getLocalRoomIdUseCase.execute(Unit).catch { emit(null) }.collect { roomId ->
+                roomId?.let {
+                    joinRoom(roomId)
+                }
+            }
+        }
     }
 
     override fun getUserInfo() {

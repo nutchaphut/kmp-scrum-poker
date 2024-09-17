@@ -18,6 +18,7 @@ interface RoomRepository {
     fun setPointVoting(roomId: String, point: String?): Flow<Unit>
     fun leaveRoom(): Flow<Unit>
     fun createRoom(roomName: String): Flow<RoomDetail>
+    suspend fun getLocalRoomId(): String?
 }
 
 class RoomRepositoryImpl(
@@ -89,6 +90,10 @@ class RoomRepositoryImpl(
         fireStoreService.createRoom(roomName = roomName, roomId = roomId).collect {
             emit(RoomDetail(roomId = roomId, roomName = roomName))
         }
+    }
+
+    override suspend fun getLocalRoomId(): String? {
+        return localStorageDatasource.getRoomId()
     }
 
 

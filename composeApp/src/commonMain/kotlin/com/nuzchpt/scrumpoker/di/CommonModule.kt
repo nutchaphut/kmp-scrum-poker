@@ -10,6 +10,7 @@ import com.nuzchpt.scrumpoker.domain.repository.UserRepository
 import com.nuzchpt.scrumpoker.domain.repository.UserRepositoryImpl
 import com.nuzchpt.scrumpoker.domain.usecase.ClearRoomParticipatesPointUseCase
 import com.nuzchpt.scrumpoker.domain.usecase.CreateRoomUseCase
+import com.nuzchpt.scrumpoker.domain.usecase.GetLocalRoomIdUseCase
 import com.nuzchpt.scrumpoker.domain.usecase.GetParticipantsUseCase
 import com.nuzchpt.scrumpoker.domain.usecase.GetRoomDetailUseCase
 import com.nuzchpt.scrumpoker.domain.usecase.GetUserInfoUseCase
@@ -46,7 +47,8 @@ val commonModule = module {
     factory { SetPointVotingUseCase(get()) }
     factory { LeaveRoomUseCase(get()) }
     factory { CreateRoomUseCase(get()) }
-    viewModel<MainViewModel> { MainViewModelImpl(get(), get(), get(), get(), get()) }
+    factory { GetLocalRoomIdUseCase(get()) }
+    viewModel<MainViewModel> { MainViewModelImpl(get(), get(), get(), get(), get(), get()) }
     viewModel<RoomViewModel> { RoomViewModelImpl(get(), get(), get(), get(), get(), get(), get()) }
 }
 
