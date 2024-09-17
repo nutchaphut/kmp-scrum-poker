@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.nuzchpt.scrumpoker.BuildKonfig
 import com.nuzchpt.scrumpoker.ui.main.viewmodel.JoinRoomState
 import com.nuzchpt.scrumpoker.ui.main.viewmodel.MainViewModel
 import com.nuzchpt.scrumpoker.ui.main.viewmodel.UserInfoState
@@ -56,7 +57,7 @@ fun MainScreen(
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("KMP Scrum Poker")
+                        Text("[${BuildKonfig.env}] KMP Scrum Poker")
                     }
                 },
                 navigationIcon = {

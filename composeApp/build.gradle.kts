@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -7,6 +8,7 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.google.service)
+    id("com.codingfeline.buildkonfig") version "0.15.2"
     kotlin("plugin.serialization") version "1.9.0"
 }
 
@@ -96,4 +98,16 @@ android {
     dependencies {
         debugImplementation(compose.uiTooling)
     }
+}
+
+buildkonfig {
+    packageName = "com.nuzchpt.scrumpoker"
+
+    defaultConfigs {
+        buildConfigField(STRING, "env", "Deefault")
+    }
+    defaultConfigs("dev") {
+        buildConfigField(STRING, "env", "Dev")
+    }
+
 }
