@@ -28,7 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -37,7 +36,10 @@ import com.nuzchpt.scrumpoker.ui.main.viewmodel.JoinRoomState
 import com.nuzchpt.scrumpoker.ui.main.viewmodel.MainViewModel
 import com.nuzchpt.scrumpoker.ui.main.viewmodel.UserInfoState
 import com.nuzchpt.scrumpoker.ui.navigation.NavigationActions
+import kmpscrumpoker.composeapp.generated.resources.Res
+import kmpscrumpoker.composeapp.generated.resources.app_name
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -68,7 +70,7 @@ fun MainScreen(
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("KMP Scrum Poker")
+                        Text(stringResource(Res.string.app_name))
                     }
                 },
                 navigationIcon = {
