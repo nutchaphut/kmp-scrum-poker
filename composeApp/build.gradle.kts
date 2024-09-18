@@ -4,9 +4,10 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.google.service)
+    alias(libs.plugins.moko.resources.generator)
+    alias(libs.plugins.jetbrainsCompose)
     kotlin("plugin.serialization") version "1.9.0"
 }
 
@@ -55,6 +56,9 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
 
+            implementation(libs.moko.resources.compose)
+            implementation(libs.moko.resources)
+
             api(libs.datastore.preferences)
             api(libs.datastore)
         }
@@ -96,4 +100,8 @@ android {
     dependencies {
         debugImplementation(compose.uiTooling)
     }
+}
+
+multiplatformResources {
+    resourcesPackage.set("com.nuzchpt.scrumpoker") // required
 }

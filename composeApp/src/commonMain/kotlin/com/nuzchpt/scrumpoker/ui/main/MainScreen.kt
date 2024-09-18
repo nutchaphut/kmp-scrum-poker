@@ -32,11 +32,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.nuzchpt.scrumpoker.MR
 import com.nuzchpt.scrumpoker.data.local.LocalStorageDatasource
 import com.nuzchpt.scrumpoker.ui.main.viewmodel.JoinRoomState
 import com.nuzchpt.scrumpoker.ui.main.viewmodel.MainViewModel
 import com.nuzchpt.scrumpoker.ui.main.viewmodel.UserInfoState
 import com.nuzchpt.scrumpoker.ui.navigation.NavigationActions
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -68,7 +70,7 @@ fun MainScreen(
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("KMP Scrum Poker")
+                        Text(stringResource(MR.strings.app_name))
                     }
                 },
                 navigationIcon = {
