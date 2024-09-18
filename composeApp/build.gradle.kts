@@ -103,5 +103,5 @@ android {
 }
 
 multiplatformResources {
-    resourcesPackage.set("com.nuzchpt.scrumpoker") // required
+    resourcesPackage.set("com.nuzchpt.scrumpoker")
 }
